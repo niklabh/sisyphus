@@ -521,7 +521,9 @@ mod tests {
 
     #[test]
     fn max_elapsed_time_stops() {
-        let clock = VirtualClock { now_ms: Cell::new(0) };
+        let clock = VirtualClock {
+            now_ms: Cell::new(0),
+        };
         let mut p = Constant::new(Duration::from_millis(100))
             .max_elapsed_time(&clock, Duration::from_millis(250));
 

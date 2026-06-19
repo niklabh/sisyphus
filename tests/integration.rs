@@ -32,7 +32,9 @@ impl Clock for VirtualClock {
 
 #[test]
 fn elapsed_time_budget_against_virtual_clock() {
-    let clock = VirtualClock { now_ms: Cell::new(0) };
+    let clock = VirtualClock {
+        now_ms: Cell::new(0),
+    };
     // Sleep advances the same virtual clock the policy reads from.
     let mut policy = ExponentialBackoff::new(Duration::from_millis(100), 2.0)
         .max_elapsed_time(&clock, Duration::from_millis(1_000));
@@ -44,7 +46,11 @@ fn elapsed_time_budget_against_virtual_clock() {
             attempts += 1;
             ControlFlow::Continue(attempts)
         },
-        |delay| clock.now_ms.set(clock.now_ms.get() + delay.as_millis() as u64),
+        |delay| {
+            clock
+                .now_ms
+                .set(clock.now_ms.get() + delay.as_millis() as u64)
+        },
     );
 
     assert!(matches!(out, Err(RetryError::Exhausted(_))));

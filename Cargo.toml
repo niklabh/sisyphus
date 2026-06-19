@@ -6,9 +6,12 @@ rust-version = "1.66"
 description = "Execution-agnostic, time-agnostic, no_std, zero-allocation backoff & retry state machine."
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/niklabh/tardigrade"
+homepage = "https://github.com/niklabh/tardigrade"
+documentation = "https://docs.rs/tardigrade"
 readme = "README.md"
 keywords = ["backoff", "retry", "no-std", "wasm", "embedded"]
 categories = ["no-std", "algorithms", "asynchronous"]
+exclude = [".github/", "/.gitignore"]
 
 [features]
 # Default build is pure `core`: no `std`, no `alloc`, no dynamic dispatch.
@@ -21,6 +24,12 @@ std = []
 [dependencies]
 
 [dev-dependencies]
+
+# `system_clock` relies on the optional `SystemClock`, so it needs the `std`
+# feature. All other examples run on the default (pure-core) build.
+[[example]]
+name = "system_clock"
+required-features = ["std"]
 
 [package.metadata.docs.rs]
 all-features = true

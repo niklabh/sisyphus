@@ -1,5 +1,12 @@
 # tardigrade
 
+[![CI](https://github.com/niklabh/tardigrade/actions/workflows/ci.yml/badge.svg)](https://github.com/niklabh/tardigrade/actions/workflows/ci.yml)
+[![crates.io](https://img.shields.io/crates/v/tardigrade.svg)](https://crates.io/crates/tardigrade)
+[![docs.rs](https://docs.rs/tardigrade/badge.svg)](https://docs.rs/tardigrade)
+[![License: MIT OR Apache-2.0](https://img.shields.io/crates/l/tardigrade.svg)](#license)
+[![no_std](https://img.shields.io/badge/no__std-yes-blue.svg)](https://docs.rust-embedded.org/book/intro/no-std.html)
+[![MSRV](https://img.shields.io/badge/MSRV-1.66-blue.svg)](https://blog.rust-lang.org/2022/12/15/Rust-1.66.0.html)
+
 > A generic, execution-agnostic and time-agnostic backoff & retry utility — a pure state machine for `no_std`, zero-allocation environments.
 
 Tardigrades (water bears) survive vacuum, radiation, and deep freeze by going
@@ -98,6 +105,23 @@ specific executor.
 | `std`   | off | `SystemClock` backed by `std::time::Instant` |
 
 The default build pulls in neither: pure `core`, allocation-free.
+
+## Examples
+
+Runnable examples live in [`examples/`](examples/):
+
+```bash
+cargo run --example quick_start                 # sync retry with thread::sleep
+cargo run --example custom_clock                # virtual Clock + elapsed-time budget
+cargo run --example jitter                      # deterministic, reproducible jitter
+cargo run --example async_retry                 # runtime-free async (hand-rolled block_on)
+cargo run --example system_clock --features std # built-in SystemClock
+```
+
+## Minimum supported Rust version (MSRV)
+
+`tardigrade` supports Rust **1.66** and later. Bumping the MSRV is considered a
+minor, not patch, change.
 
 ## License
 
