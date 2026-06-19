@@ -11,7 +11,7 @@
 use std::ops::ControlFlow;
 use std::time::{Duration, Instant};
 
-use tardigrade::{retry_sync, ExponentialBackoff, PolicyExt, RetryError};
+use sisyphus::{retry_sync, ExponentialBackoff, PolicyExt, RetryError};
 
 /// A fake service that fails a few times before succeeding.
 fn flaky_connect(attempt: u32) -> Result<&'static str, &'static str> {

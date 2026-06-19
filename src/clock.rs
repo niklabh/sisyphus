@@ -1,6 +1,6 @@
 //! Time abstraction.
 //!
-//! `tardigrade` never reads the wall clock itself. Instead, any policy that
+//! `sisyphus` never reads the wall clock itself. Instead, any policy that
 //! needs a notion of "how much time has elapsed" (e.g. [`MaxElapsedTime`]) asks
 //! the host for it through a [`Clock`]. This is what makes the crate usable
 //! inside a WebAssembly engine, a deterministic blockchain state machine, or a
@@ -26,7 +26,7 @@ use core::time::Duration;
 /// ```
 /// use core::cell::Cell;
 /// use core::time::Duration;
-/// use tardigrade::Clock;
+/// use sisyphus::Clock;
 ///
 /// /// A clock the test fully controls, measured in milliseconds.
 /// struct VirtualClock {

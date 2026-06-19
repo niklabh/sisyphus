@@ -1,11 +1,12 @@
-//! # tardigrade
+//! # sisyphus
 //!
 //! A generic, **execution-agnostic** and **time-agnostic** backoff & retry
 //! utility, built as a pure state machine.
 //!
-//! Tardigrades (water bears) survive vacuum, radiation, and deep freeze by
-//! entering a dormant state and waiting it out. This crate does the digital
-//! equivalent: it computes *when* to wake up and try again, and nothing else.
+//! Sisyphus was condemned by the gods to roll a boulder up a hill for eternity,
+//! only to watch it roll back down every time — the original retry loop. This
+//! crate is the part of that punishment worth keeping: it computes *when* to
+//! push the boulder again, and nothing else.
 //!
 //! ## Why another retry crate?
 //!
@@ -18,7 +19,7 @@
 //!   reads and panics are forbidden;
 //! * **`no_std` embedded** targets with no allocator and no `std::time`.
 //!
-//! `tardigrade` solves this by being a pure state machine:
+//! `sisyphus` solves this by being a pure state machine:
 //!
 //! * `#![no_std]`, zero allocation, no `dyn` (unless you opt in).
 //! * Time is just [`core::time::Duration`]; instants come from your [`Clock`].
@@ -30,7 +31,7 @@
 //! ```
 //! use core::ops::ControlFlow;
 //! use core::time::Duration;
-//! use tardigrade::{retry_sync, ExponentialBackoff, PolicyExt, RetryError};
+//! use sisyphus::{retry_sync, ExponentialBackoff, PolicyExt, RetryError};
 //!
 //! // 1. Build a policy by composing pure state machines.
 //! let policy = ExponentialBackoff::new(Duration::from_millis(50), 2.0)
@@ -115,7 +116,7 @@ mod boxed {
     /// ```
     /// # extern crate alloc;
     /// use core::time::Duration;
-    /// use tardigrade::{BackoffPolicy, BoxedPolicy, Constant, ExponentialBackoff, PolicyExt};
+    /// use sisyphus::{BackoffPolicy, BoxedPolicy, Constant, ExponentialBackoff, PolicyExt};
     ///
     /// // Two different concrete policy types behind one storable type.
     /// let policies: [BoxedPolicy; 2] = [

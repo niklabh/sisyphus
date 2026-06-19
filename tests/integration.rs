@@ -10,7 +10,7 @@ use core::pin::Pin;
 use core::task::{Context, Poll, RawWaker, RawWakerVTable, Waker};
 use core::time::Duration;
 
-use tardigrade::{
+use sisyphus::{
     retry_async, retry_sync, BackoffPolicy, Clock, ExponentialBackoff, PolicyExt, RetryError,
     SplitMix64,
 };

@@ -14,7 +14,7 @@ use std::cell::Cell;
 use std::ops::ControlFlow;
 use std::time::Duration;
 
-use tardigrade::{retry_sync, Clock, ExponentialBackoff, PolicyExt, RetryError};
+use sisyphus::{retry_sync, Clock, ExponentialBackoff, PolicyExt, RetryError};
 
 /// A fully deterministic virtual clock measured in milliseconds.
 struct VirtualClock {

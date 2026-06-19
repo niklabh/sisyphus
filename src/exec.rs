@@ -83,7 +83,7 @@ impl<C: core::fmt::Debug + core::fmt::Display> std::error::Error for RetryError<
 /// ```
 /// use core::ops::ControlFlow;
 /// use core::time::Duration;
-/// use tardigrade::{retry_sync, ExponentialBackoff, PolicyExt, RetryError};
+/// use sisyphus::{retry_sync, ExponentialBackoff, PolicyExt, RetryError};
 ///
 /// let policy = ExponentialBackoff::default().max_attempts(5);
 ///
@@ -113,7 +113,7 @@ impl<C: core::fmt::Debug + core::fmt::Display> std::error::Error for RetryError<
 /// ```
 /// use core::ops::ControlFlow;
 /// use core::time::Duration;
-/// use tardigrade::{retry_sync, Constant, PolicyExt, RetryError};
+/// use sisyphus::{retry_sync, Constant, PolicyExt, RetryError};
 ///
 /// let policy = Constant::new(Duration::from_millis(1)).max_attempts(2);
 /// let result: Result<(), RetryError<i32>> = retry_sync(
@@ -164,7 +164,7 @@ where
 /// use core::pin::Pin;
 /// use core::task::{Context, Poll, RawWaker, RawWakerVTable, Waker};
 /// use core::time::Duration;
-/// use tardigrade::{retry_async, ExponentialBackoff, PolicyExt, RetryError};
+/// use sisyphus::{retry_async, ExponentialBackoff, PolicyExt, RetryError};
 ///
 /// // A future that is ready immediately (a stand-in for a real timer).
 /// async fn ready() {}

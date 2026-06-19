@@ -1,17 +1,18 @@
-# tardigrade
+# sisyphus
 
-[![CI](https://github.com/niklabh/tardigrade/actions/workflows/ci.yml/badge.svg)](https://github.com/niklabh/tardigrade/actions/workflows/ci.yml)
-[![crates.io](https://img.shields.io/crates/v/tardigrade.svg)](https://crates.io/crates/tardigrade)
-[![docs.rs](https://docs.rs/tardigrade/badge.svg)](https://docs.rs/tardigrade)
-[![License: MIT OR Apache-2.0](https://img.shields.io/crates/l/tardigrade.svg)](#license)
+[![CI](https://github.com/niklabh/sisyphus/actions/workflows/ci.yml/badge.svg)](https://github.com/niklabh/sisyphus/actions/workflows/ci.yml)
+[![crates.io](https://img.shields.io/crates/v/sisyphus.svg)](https://crates.io/crates/sisyphus)
+[![docs.rs](https://docs.rs/sisyphus/badge.svg)](https://docs.rs/sisyphus)
+[![License: MIT OR Apache-2.0](https://img.shields.io/crates/l/sisyphus.svg)](#license)
 [![no_std](https://img.shields.io/badge/no__std-yes-blue.svg)](https://docs.rust-embedded.org/book/intro/no-std.html)
 [![MSRV](https://img.shields.io/badge/MSRV-1.66-blue.svg)](https://blog.rust-lang.org/2022/12/15/Rust-1.66.0.html)
 
 > A generic, execution-agnostic and time-agnostic backoff & retry utility — a pure state machine for `no_std`, zero-allocation environments.
 
-Tardigrades (water bears) survive vacuum, radiation, and deep freeze by going
-dormant and waiting it out. This crate does the digital equivalent: it computes
-*when* to retry, and nothing else.
+Sisyphus was condemned by the gods to roll a boulder up a hill for eternity,
+only to watch it roll back down every time — the original retry loop. This crate
+is the part of that punishment worth keeping: it computes *when* to push again,
+and nothing else.
 
 ## Why?
 
@@ -23,7 +24,7 @@ Most retry crates bake in `std::time::Instant` and `std::thread::sleep`, welding
   wall clock or panicking is a fault;
 - **`no_std` embedded** targets with no allocator and no `std::time`.
 
-`tardigrade` is a pure state machine instead:
+`sisyphus` is a pure state machine instead:
 
 - `#![no_std]`, **zero allocation**, no `dyn` (unless you opt in via `alloc`).
 - Time is just `core::time::Duration`; instants come from *your* `Clock`.
@@ -38,7 +39,7 @@ Most retry crates bake in `std::time::Instant` and `std::thread::sleep`, welding
 ```rust
 use core::ops::ControlFlow;
 use core::time::Duration;
-use tardigrade::{retry_sync, ExponentialBackoff, PolicyExt, RetryError};
+use sisyphus::{retry_sync, ExponentialBackoff, PolicyExt, RetryError};
 
 // Compose pure state-machine policies.
 let policy = ExponentialBackoff::new(Duration::from_millis(50), 2.0)
@@ -120,7 +121,7 @@ cargo run --example system_clock --features std # built-in SystemClock
 
 ## Minimum supported Rust version (MSRV)
 
-`tardigrade` supports Rust **1.66** and later. Bumping the MSRV is considered a
+`sisyphus` supports Rust **1.66** and later. Bumping the MSRV is considered a
 minor, not patch, change.
 
 ## License

@@ -10,7 +10,7 @@
 use std::ops::ControlFlow;
 use std::time::Duration;
 
-use tardigrade::{retry_sync, Constant, PolicyExt, RetryError, SystemClock};
+use sisyphus::{retry_sync, Constant, PolicyExt, RetryError, SystemClock};
 
 fn main() {
     // Poll every 20ms, but never spend more than 200ms of real time trying.

@@ -11,7 +11,7 @@
 
 use std::time::Duration;
 
-use tardigrade::{BackoffPolicy, ExponentialBackoff, SplitMix64};
+use sisyphus::{BackoffPolicy, ExponentialBackoff, SplitMix64};
 
 fn delays_for_seed(seed: u64) -> Vec<Duration> {
     // ±50% symmetric jitter around an exponentially growing interval.

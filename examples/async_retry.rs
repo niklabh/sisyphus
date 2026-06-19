@@ -16,7 +16,7 @@ use std::pin::Pin;
 use std::task::{Context, Poll, RawWaker, RawWakerVTable, Waker};
 use std::time::Duration;
 
-use tardigrade::{retry_async, ExponentialBackoff, PolicyExt, RetryError};
+use sisyphus::{retry_async, ExponentialBackoff, PolicyExt, RetryError};
 
 /// A stand-in for a real async timer; ready on first poll.
 async fn fake_sleep(delay: Duration) {

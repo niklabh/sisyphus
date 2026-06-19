@@ -11,7 +11,7 @@
 //!
 //! ```
 //! use core::time::Duration;
-//! use tardigrade::{ExponentialBackoff, PolicyExt};
+//! use sisyphus::{ExponentialBackoff, PolicyExt};
 //!
 //! let policy = ExponentialBackoff::new(Duration::from_millis(100), 2.0)
 //!     .with_max_delay(Duration::from_secs(10)) // never wait longer than 10s
@@ -63,7 +63,7 @@ impl<P: BackoffPolicy + ?Sized> BackoffPolicy for &mut P {
 ///
 /// ```
 /// use core::time::Duration;
-/// use tardigrade::{BackoffPolicy, Constant};
+/// use sisyphus::{BackoffPolicy, Constant};
 ///
 /// let mut p = Constant::new(Duration::from_millis(250));
 /// assert_eq!(p.next_delay(), Some(Duration::from_millis(250)));
@@ -116,7 +116,7 @@ impl BackoffPolicy for Constant {
 ///
 /// ```
 /// use core::time::Duration;
-/// use tardigrade::{BackoffPolicy, ExponentialBackoff};
+/// use sisyphus::{BackoffPolicy, ExponentialBackoff};
 ///
 /// let mut p = ExponentialBackoff::new(Duration::from_millis(100), 2.0);
 /// assert_eq!(p.next_delay(), Some(Duration::from_millis(100)));
@@ -163,7 +163,7 @@ impl<J: Jitter> ExponentialBackoff<J> {
     ///
     /// ```
     /// use core::time::Duration;
-    /// use tardigrade::{BackoffPolicy, ExponentialBackoff, SplitMix64};
+    /// use sisyphus::{BackoffPolicy, ExponentialBackoff, SplitMix64};
     ///
     /// let mut p = ExponentialBackoff::new(Duration::from_millis(1000), 2.0)
     ///     .with_jitter(SplitMix64::new(42), 0.5);
@@ -405,7 +405,7 @@ impl<P: BackoffPolicy, C: Clock> BackoffPolicy for MaxElapsedTime<P, C> {
 ///
 /// ```
 /// use core::time::Duration;
-/// use tardigrade::{Constant, PolicyExt};
+/// use sisyphus::{Constant, PolicyExt};
 ///
 /// let policy = Constant::new(Duration::from_millis(100))
 ///     .with_max_delay(Duration::from_secs(1))

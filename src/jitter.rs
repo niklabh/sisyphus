@@ -82,7 +82,7 @@ impl Jitter for NoJitter {
 /// # Example
 ///
 /// ```
-/// use tardigrade::{Jitter, SplitMix64};
+/// use sisyphus::{Jitter, SplitMix64};
 ///
 /// let mut a = SplitMix64::new(42);
 /// let mut b = SplitMix64::new(42);
