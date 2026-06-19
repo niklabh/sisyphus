@@ -138,7 +138,10 @@ impl ExponentialBackoff<NoJitter> {
     /// Create an exponential backoff starting at `initial`, scaled by
     /// `multiplier` after each attempt, with no jitter.
     ///
-    /// A `multiplier` of `<= 0.0` or non-finite is treated as "no growth".
+    /// A `multiplier` of `<= 0.0`, `NaN`, or infinite is treated as "no
+    /// growth": the interval stays pinned at `initial` (equivalent to a
+    /// multiplier of `1.0`) instead of collapsing to zero or jumping to
+    /// [`Duration::MAX`].
     #[inline]
     #[must_use]
     pub const fn new(initial: Duration, multiplier: f64) -> Self {
@@ -190,8 +193,13 @@ impl<J: Jitter> BackoffPolicy for ExponentialBackoff<J> {
     fn next_delay(&mut self) -> Option<Duration> {
         // Jitter is applied to the *current* nominal interval...
         let delay = self.jitter.apply(self.current, self.randomization_factor);
-        // ...then the nominal interval grows for next time (saturating).
-        self.current = saturating_mul_f64(self.current, self.multiplier);
+        // ...then the nominal interval grows for next time (saturating). A
+        // degenerate multiplier (<= 0.0, NaN, or infinite) is treated as "no
+        // growth" — the interval is held steady rather than collapsing to zero
+        // (which would busy-retry) or jumping to `Duration::MAX`.
+        if self.multiplier.is_finite() && self.multiplier > 0.0 {
+            self.current = saturating_mul_f64(self.current, self.multiplier);
+        }
         Some(delay)
     }
 
@@ -215,7 +223,17 @@ impl Default for ExponentialBackoff<NoJitter> {
 /// signalling the executor to stop retrying. Construct via
 /// [`PolicyExt::max_attempts`].
 ///
+/// # Counting: retries, not total attempts
+///
+/// `max` bounds the number of *retries* — the delays handed out *between*
+/// attempts — not the total number of operation calls. The first attempt
+/// happens before any delay is requested, so a driver like [`retry_sync`] will
+/// call the operation up to `max + 1` times: one initial attempt plus `max`
+/// retries. For example, `max_attempts(3)` permits 3 delays and therefore up to
+/// 4 operation calls.
+///
 /// [`next_delay`]: BackoffPolicy::next_delay
+/// [`retry_sync`]: crate::retry_sync
 #[derive(Debug, Clone, Copy)]
 pub struct MaxAttempts<P> {
     inner: P,
@@ -320,6 +338,16 @@ impl<P: BackoffPolicy> BackoffPolicy for WithMaxDelay<P> {
 /// Because the time source is injected, this works identically against a real
 /// system clock and a fully virtual test clock.
 ///
+/// # The budget gates *starting* a retry, not finishing it
+///
+/// The elapsed-time check happens when a delay is *requested*, and the returned
+/// delay is **not** clamped against the remaining budget. So a retry that is
+/// permitted just before the budget expires will still sleep for its full
+/// delay, pushing the real elapsed time past `max_elapsed` by up to one
+/// interval. In other words, `max_elapsed` bounds when the *last retry begins*,
+/// not when all waiting is guaranteed to be done. Pair it with
+/// [`WithMaxDelay`] if you need to cap that overshoot.
+///
 /// [`next_delay`]: BackoffPolicy::next_delay
 #[derive(Debug, Clone, Copy)]
 pub struct MaxElapsedTime<P, C: Clock> {
@@ -386,6 +414,9 @@ impl<P: BackoffPolicy, C: Clock> BackoffPolicy for MaxElapsedTime<P, C> {
 /// ```
 pub trait PolicyExt: BackoffPolicy + Sized {
     /// Cap the number of retries to `max`. See [`MaxAttempts`].
+    ///
+    /// This counts *retries*, not total attempts: the initial attempt is always
+    /// made before any delay, so the operation runs up to `max + 1` times.
     #[inline]
     #[must_use]
     fn max_attempts(self, max: u32) -> MaxAttempts<Self> {
@@ -436,6 +467,23 @@ mod tests {
             let _ = p.next_delay();
         }
         assert_eq!(p.next_delay(), Some(Duration::MAX));
+    }
+
+    #[test]
+    fn degenerate_multiplier_holds_interval_steady() {
+        // <= 0.0, NaN, and infinite multipliers must all mean "no growth":
+        // the interval stays at `initial` rather than collapsing to zero or
+        // jumping to Duration::MAX.
+        for m in [0.0, -1.0, f64::NAN, f64::INFINITY] {
+            let mut p = ExponentialBackoff::new(Duration::from_millis(100), m);
+            for _ in 0..5 {
+                assert_eq!(
+                    p.next_delay(),
+                    Some(Duration::from_millis(100)),
+                    "multiplier {m} should hold the interval steady",
+                );
+            }
+        }
     }
 
     #[test]
